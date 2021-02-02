@@ -1,65 +1,36 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import PokemonItem from "../src/components/PokemonItem";
+import Sidebar from "../src/components/Sidebar";
 
-export default function Home() {
-  return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+export async function getStaticProps() {
+	const res = await fetch("http://localhost:5000");
+	const pokemons = await res.json();
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+	return {
+		props: {
+			pokemons,
+		},
+	};
+}
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+export default function Home({ pokemons }) {
+	return (
+		<div>
+			<p className="uppercase text-gray-400 tracking-widest text-sm mt-4 text-center">
+				Showing results for all generations
+			</p>
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+			<div id="content" className="lg:flex py-5">
+				<div
+					className="w-11/12 mx-auto max-w-md md:grid md:grid-cols-2 md:max-w-none md:gap-5 lg:mx-2 lg:w-10/12 lg:grid-cols-3 px-10"
+					id="pokemon-list"
+				>
+					{pokemons.map((pokemon) => (
+						<PokemonItem key={pokemon.id} {...pokemon} />
+					))}
+				</div>
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
-  )
+				<Sidebar />
+			</div>
+		</div>
+	);
 }
